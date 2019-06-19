@@ -113,10 +113,19 @@ function LaunchSubScript(scriptText, funcList, subList, ...) end
 function AbortSubScript(ssID) end
 function IsSubScriptRunning(ssID) end
 function LoadModule(fileName, ...)
+	
+
 	if not fileName:match("%.lua") then
 		fileName = fileName .. ".lua"
 	end
 	local func, err = loadfile(fileName)
+
+	-- Hack to replace jsonToLua, MoonSharp can't handle the supplied pattern
+	if fileName == "Modules/Common" and PatchJsonToLua ~=nil then
+		PatchJsonToLua()
+	end
+
+
 	if func then
 		return func(...)
 	else
@@ -160,7 +169,7 @@ local l_require = require
 function require(name)
 	-- Hack to stop it looking for lcurl, which we don't really need
 	if name == "lcurl.safe" then
-		return
+		return curl_shim
 	end
 	return l_require(name)
 end
