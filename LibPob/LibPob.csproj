@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Assets\PostLaunch.lua" />
+    <None Remove="Assets\PreLaunch.lua" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\PostLaunch.lua" />
+    <EmbeddedResource Include="Assets\PreLaunch.lua">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MoonSharp" Version="2.0.0" />
+  </ItemGroup>
+</Project>
