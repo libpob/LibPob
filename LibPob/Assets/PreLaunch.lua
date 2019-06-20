@@ -112,17 +112,13 @@ end
 function LaunchSubScript(scriptText, funcList, subList, ...) end
 function AbortSubScript(ssID) end
 function IsSubScriptRunning(ssID) end
+
 function LoadModule(fileName, ...)
 	if not fileName:match("%.lua") then
 		fileName = fileName .. ".lua"
 	end
 	
 	ConPrintf("Loading " .. fileName)
-
-	-- Update hack
-	if fileName == "UpdateCheck.lua" then
-		return "none"
-	end
 
 	-- Hack to replace jsonToLua, MoonSharp can't handle the supplied pattern
 	if fileName == "Modules/Common.lua" and PatchJsonToLua ~= nil then
@@ -148,7 +144,6 @@ function LoadModule(fileName, ...)
 	end
 end
 
-
 function PLoadModule(fileName, ...)
 	if not fileName:match("%.lua") then
 		fileName = fileName .. ".lua"
@@ -160,6 +155,7 @@ function PLoadModule(fileName, ...)
 		error("PLoadModule() error loading '"..fileName.."': "..err)
 	end
 end
+
 function PCall(func, ...)
 	local ret = { pcall(func, ...) }
 	if ret[1] then
@@ -181,27 +177,6 @@ function OpenURL(url) end
 function SetProfiling(isEnabled) end
 function Restart() end
 function Exit() end
-
-local l_require = require
-function require(name)
-	-- Hack to stop it looking for lcurl, which we don't really need
-	-- ^ Turns out it's needed. Patch in shim that's pre-loaded
-	if name == "lcurl.safe" then
-		return curl_shim
-	end
-	return l_require(name)
-end
-
--- Fix file paths
--- TODO: Fix this ugly hack
-local l_open = io.open
-io.open = function(fileName, ...)
-	if fileName ~= nil and not fileName:match("PathOfBuilding") then
-		fileName = InstallDirectory .. "\\" .. fileName
-	end
-
-	return l_open(fileName, ...)
-end
 
 ConPrintf("PreLaunch finished")
 

@@ -45,11 +45,16 @@ namespace LibPob
 
         private void LoadLua()
         {
-            _script.Globals["bit"] = _script.DoFile("Assets/bitops_lua/funcs.lua");
+            // Load shims & replacement modules
+            _script.Globals["bit"] = _script.DoFile("Assets/bitops.lua");
             _script.Globals["curl_shim"] = _script.DoFile("Assets/curl_shim.lua");
+
+            // Load global functions and data
             _script.Globals["PatchJsonToLua"] = (Action<Script>) PatchJsonToLua;
             _script.Globals["InstallDirectory"] = InstallDirectory;
 
+            // Patch functions and launch
+            _script.DoFile("Assets/PatchFunctions.lua");
             _script.DoFile("Assets/PreLaunch.lua");
             _script.DoFile("Launch.lua");
 
