@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using MoonSharp.Interpreter;
 
 namespace LibPob
@@ -44,16 +38,11 @@ namespace LibPob
 
         private void LoadLua()
         {
-            // Load shims & replacement modules
-            _script.Globals["bit"] = _script.DoFile("Assets/bitops.lua");
-            _script.Globals["curl_shim"] = _script.DoFile("Assets/curl_shim.lua");
+            LoadPatches();
+            LoadLibs();
 
-            // Load global functions and data
-            _script.Globals["PatchJsonToLua"] = (Action<Script>) PatchJsonToLua;
             _script.Globals["InstallDirectory"] = InstallDirectory;
 
-            // Patch functions and launch
-            _script.DoFile("Assets/PatchCoreFunctions.lua");
             _script.DoFile("Assets/PreLaunch.lua");
             _script.DoFile("Launch.lua");
 
@@ -66,26 +55,29 @@ namespace LibPob
             _script.DoFile("Assets/PostLaunch.lua");
         }
 
-
-        private static void PatchJsonToLua(Script script)
+        private void LoadPatches()
         {
-            script.Globals["jsonToLua"] = (Func<Script, string, string>) JsonToLua;
+            var patchDir = Path.Combine(Utils.AppDirectory, "Patches");
+
+            foreach (var file in Directory.EnumerateFiles(patchDir, "*.lua"))
+            {
+                _script.DoFile(file);
+            }
         }
 
-        private static string JsonToLua(Script script, string json)
+        private void LoadLibs()
         {
-            json = json.Replace('[', '{');
-            json = json.Replace(']', '}');
-            json = Regex.Replace(json, "\"(-?[0-9]*\\.?[0-9]+)\":", "[$1]=");
-            json = Regex.Replace(json, "\"([^\"]+)\":", "[\"$1\"]=");
-            json = json.Replace("\\/", "/");
+            var libDir = Path.Combine(Utils.AppDirectory, "Libs");
 
-            if (script.Globals["codePointToUTF8"] is Closure codePointToUtf8)
+            foreach (var file in Directory.EnumerateFiles(libDir, "*.lua"))
             {
-                json = Regex.Replace(json, "[^\u0000-\u007F]", m => codePointToUtf8.Call((int)(m.Value[0])).String);
-            }
+                var module = Path.GetFileNameWithoutExtension(file);
 
-            return json;
+                if (module == null)
+                    continue;
+
+                _script.Globals[module] = _script.DoFile(file);
+            }
         }
 
         private static void CheckForUpdateHook(bool background)

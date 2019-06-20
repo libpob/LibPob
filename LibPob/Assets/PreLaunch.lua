@@ -120,22 +120,6 @@ function LoadModule(fileName, ...)
 	
 	--ConPrintf("Loading " .. fileName)
 
-	-- Hack to replace jsonToLua, MoonSharp can't handle the supplied pattern
-	if fileName == "Modules/Common.lua" and PatchJsonToLua ~= nil then
-		local func, err = loadfile(fileName)
-		if func then
-			local result = func(...)
-
-			PatchJsonToLua()
-
-			return result
-		else
-			error("LoadModule() error loading '"..fileName.."': "..err)
-		end
-	end
-	
-
-	-- Normal loading
 	local func, err = loadfile(fileName)
 	if func then
 		return func(...)
