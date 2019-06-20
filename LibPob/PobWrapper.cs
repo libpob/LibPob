@@ -48,6 +48,7 @@ namespace LibPob
             _script.Globals["bit"] = _script.DoFile("Assets/bitops_lua/funcs.lua");
             _script.Globals["curl_shim"] = _script.DoFile("Assets/curl_shim.lua");
             _script.Globals["PatchJsonToLua"] = (Action<Script>) PatchJsonToLua;
+            _script.Globals["InstallDirectory"] = InstallDirectory;
 
             _script.DoFile("Assets/PreLaunch.lua");
             _script.DoFile("Launch.lua");
@@ -77,7 +78,7 @@ namespace LibPob
 
             if (script.Globals["codePointToUTF8"] is Closure codePointToUtf8)
             {
-                json = Regex.Replace(json, "[^\u0000-\u007F]", m => codePointToUtf8.Call(m.Value).String);
+                json = Regex.Replace(json, "[^\u0000-\u007F]", m => codePointToUtf8.Call((int)(m.Value[0])).String);
             }
 
             return json;

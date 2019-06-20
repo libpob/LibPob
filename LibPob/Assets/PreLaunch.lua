@@ -119,6 +119,11 @@ function LoadModule(fileName, ...)
 	
 	ConPrintf("Loading " .. fileName)
 
+	-- Update hack
+	if fileName == "UpdateCheck.lua" then
+		return "none"
+	end
+
 	-- Hack to replace jsonToLua, MoonSharp can't handle the supplied pattern
 	if fileName == "Modules/Common.lua" and PatchJsonToLua ~= nil then
 		local func, err = loadfile(fileName)
@@ -132,6 +137,7 @@ function LoadModule(fileName, ...)
 			error("LoadModule() error loading '"..fileName.."': "..err)
 		end
 	end
+	
 
 	-- Normal loading
 	local func, err = loadfile(fileName)
@@ -184,6 +190,17 @@ function require(name)
 		return curl_shim
 	end
 	return l_require(name)
+end
+
+-- Fix file paths
+-- TODO: Fix this ugly hack
+local l_open = io.open
+io.open = function(fileName, ...)
+	if fileName ~= nil and not fileName:match("PathOfBuilding") then
+		fileName = InstallDirectory .. "\\" .. fileName
+	end
+
+	return l_open(fileName, ...)
 end
 
 ConPrintf("PreLaunch finished")
