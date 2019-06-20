@@ -113,25 +113,36 @@ function LaunchSubScript(scriptText, funcList, subList, ...) end
 function AbortSubScript(ssID) end
 function IsSubScriptRunning(ssID) end
 function LoadModule(fileName, ...)
-	
-
 	if not fileName:match("%.lua") then
 		fileName = fileName .. ".lua"
 	end
-	local func, err = loadfile(fileName)
+	
+	ConPrintf("Loading " .. fileName)
 
 	-- Hack to replace jsonToLua, MoonSharp can't handle the supplied pattern
-	if fileName == "Modules/Common" and PatchJsonToLua ~=nil then
-		PatchJsonToLua()
+	if fileName == "Modules/Common.lua" and PatchJsonToLua ~= nil then
+		local func, err = loadfile(fileName)
+		if func then
+			local result = func(...)
+
+			PatchJsonToLua()
+
+			return result
+		else
+			error("LoadModule() error loading '"..fileName.."': "..err)
+		end
 	end
 
-
+	-- Normal loading
+	local func, err = loadfile(fileName)
 	if func then
 		return func(...)
 	else
 		error("LoadModule() error loading '"..fileName.."': "..err)
 	end
 end
+
+
 function PLoadModule(fileName, ...)
 	if not fileName:match("%.lua") then
 		fileName = fileName .. ".lua"
@@ -168,6 +179,7 @@ function Exit() end
 local l_require = require
 function require(name)
 	-- Hack to stop it looking for lcurl, which we don't really need
+	-- ^ Turns out it's needed. Patch in shim that's pre-loaded
 	if name == "lcurl.safe" then
 		return curl_shim
 	end

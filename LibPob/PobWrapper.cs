@@ -6,7 +6,9 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Loaders;
 
 namespace LibPob
 {
@@ -45,7 +47,7 @@ namespace LibPob
         {
             _script.Globals["bit"] = _script.DoFile("Assets/bitops_lua/funcs.lua");
             _script.Globals["curl_shim"] = _script.DoFile("Assets/curl_shim.lua");
-            _script.Globals["PatchJsonToLua"] = (Action) PatchJsonToLua;
+            _script.Globals["PatchJsonToLua"] = (Action<Script>) PatchJsonToLua;
 
             _script.DoFile("Assets/PreLaunch.lua");
             _script.DoFile("Launch.lua");
@@ -60,9 +62,25 @@ namespace LibPob
         }
 
 
-        private static void PatchJsonToLua()
+        private static void PatchJsonToLua(Script script)
         {
+            script.Globals["jsonToLua"] = (Func<Script, string, string>) JsonToLua;
+        }
 
+        private static string JsonToLua(Script script, string json)
+        {
+            json = json.Replace('[', '{');
+            json = json.Replace(']', '}');
+            json = Regex.Replace(json, "\"(-?[0-9]*\\.?[0-9]+)\":", "[$1]=");
+            json = Regex.Replace(json, "\"([^\"]+)\":", "[\"$1\"]=");
+            json = json.Replace("\\/", "/");
+
+            if (script.Globals["codePointToUTF8"] is Closure codePointToUtf8)
+            {
+                json = Regex.Replace(json, "[^\u0000-\u007F]", m => codePointToUtf8.Call(m.Value).String);
+            }
+
+            return json;
         }
 
         private static void CheckForUpdateHook(bool background)
