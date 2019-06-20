@@ -4,13 +4,13 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\curl_shim.lua" />
-    <None Remove="Assets\PatchFunctions.lua" />
+    <None Remove="Assets\PatchCoreFunctions.lua" />
     <None Remove="Assets\PostLaunch.lua" />
     <None Remove="Assets\PreLaunch.lua" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\curl_shim.lua" />
-    <EmbeddedResource Include="Assets\PatchFunctions.lua" />
+    <EmbeddedResource Include="Assets\PatchCoreFunctions.lua" />
     <EmbeddedResource Include="Assets\PostLaunch.lua" />
     <EmbeddedResource Include="Assets\PreLaunch.lua">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

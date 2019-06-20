@@ -19,8 +19,11 @@ io.open = function(fileName, ...)
 	end
 
 	if fileName ~= nil and not fileName:match("PathOfBuilding") then
-		fileName = InstallDirectory .. "\\" .. fileName
+		fileName = InstallDirectory:gsub("\\", "/") .. "/" .. fileName
 	end
 
 	return l_open(fileName, ...)
 end
+
+-- MoonSharp doesn't have a built in loadstring function. it uses load. what the...
+loadstring = loadstring or load

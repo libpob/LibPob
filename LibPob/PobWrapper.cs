@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Loaders;
 
 namespace LibPob
 {
@@ -54,7 +53,7 @@ namespace LibPob
             _script.Globals["InstallDirectory"] = InstallDirectory;
 
             // Patch functions and launch
-            _script.DoFile("Assets/PatchFunctions.lua");
+            _script.DoFile("Assets/PatchCoreFunctions.lua");
             _script.DoFile("Assets/PreLaunch.lua");
             _script.DoFile("Launch.lua");
 

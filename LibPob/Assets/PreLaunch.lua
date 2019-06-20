@@ -118,7 +118,7 @@ function LoadModule(fileName, ...)
 		fileName = fileName .. ".lua"
 	end
 	
-	ConPrintf("Loading " .. fileName)
+	--ConPrintf("Loading " .. fileName)
 
 	-- Hack to replace jsonToLua, MoonSharp can't handle the supplied pattern
 	if fileName == "Modules/Common.lua" and PatchJsonToLua ~= nil then
