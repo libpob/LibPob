@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29001.49
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibPob", "LibPob\LibPob.csproj", "{154E2F54-F2C9-4537-9BCF-00CB873FBF87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibPob", "LibPob\LibPob.csproj", "{154E2F54-F2C9-4537-9BCF-00CB873FBF87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Playground\Playground.csproj", "{9EAECBCE-CE12-4AB5-84C5-C087CD7F3F80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground", "Playground\Playground.csproj", "{9EAECBCE-CE12-4AB5-84C5-C087CD7F3F80}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3rd Party Libraries", "3rd Party Libraries", "{ECEE375F-D3A2-48AF-AB5D-89BED8C8B10C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonSharp.Interpreter.netcore", "MoonSharp\src\MoonSharp.Interpreter\_Projects\MoonSharp.Interpreter.netcore\MoonSharp.Interpreter.netcore.csproj", "{4237CED0-1BD0-4789-A99C-FAB0E208EB7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +25,16 @@ Global
 		{9EAECBCE-CE12-4AB5-84C5-C087CD7F3F80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EAECBCE-CE12-4AB5-84C5-C087CD7F3F80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EAECBCE-CE12-4AB5-84C5-C087CD7F3F80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4237CED0-1BD0-4789-A99C-FAB0E208EB7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4237CED0-1BD0-4789-A99C-FAB0E208EB7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4237CED0-1BD0-4789-A99C-FAB0E208EB7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4237CED0-1BD0-4789-A99C-FAB0E208EB7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4237CED0-1BD0-4789-A99C-FAB0E208EB7E} = {ECEE375F-D3A2-48AF-AB5D-89BED8C8B10C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0B32D2ED-8732-462B-80B4-3B9568A9357A}

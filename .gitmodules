@@ -1,0 +1,3 @@
+[submodule "MoonSharp"]
+	path = MoonSharp
+	url = https://github.com/libpob/moonsharp.git

@@ -17,9 +17,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MoonSharp" Version="2.0.0" />
+    <EmbeddedResource Include="Assets\bitops.lua" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\bitops.lua" />
+    <ProjectReference Include="..\MoonSharp\src\MoonSharp.Interpreter\_Projects\MoonSharp.Interpreter.netcore\MoonSharp.Interpreter.netcore.csproj" />
   </ItemGroup>
 </Project>
