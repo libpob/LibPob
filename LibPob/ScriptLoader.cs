@@ -49,38 +49,60 @@ namespace LibPob
                 return _resourceAssembly.GetManifestResourceStream(resource);
 
             /*
-             * God forgive me, for I have a butchered this.
-             *
-             * Problem: self.ModLines == varSpec
-             * Fix: local varSpec = nil
-             *
-             * TODO: Figure out the problem in MoonSharp
-             *
-             * for _, modLine in ipairs(self.modLines) do
-             *       if not modLine.buff then
-             *           ...
-             *           if modLine.variantList then
-             *               print("self.modLines: " .. l_dump(self.modLines) .. "\n")
-             *               local varSpec
-             *               print("varSpec: " .. l_dump(varSpec) .. "\n")
-             *               for varId in pairs(modLine.variantList) do
-             *                   varSpec = (varSpec and varSpec.."," or "") .. varId
-             *               end
-             *               line = "{variant:"..varSpec.."}"..line
-             *           end
-             *           t_insert(rawLines, line)
-             *       end
-             *   end
+             * God forgive me, for I have made terrible "fixes"
              */
-            if (file.Contains("Item.lua"))
+            switch (Path.GetFileName(file))
             {
-                var text = File.ReadAllText(file).Replace("local varSpec\n", "local varSpec = nil\n");
-                var bytes = Encoding.ASCII.GetBytes(text);
-                return new MemoryStream(bytes);
+                /*
+                 * TODO: Figure out the problem in MoonSharp
+                 *
+                 * for k, v in ipairs(a) do
+                 *      local b
+                 *      assert(a != b, "These should not be equal")
+                 * end
+                 */
+                case "Item.lua":
+                    return HackFile(file, new Dictionary<string, string>
+                    {
+                        {"local varSpec\n", "local varSpec = nil\n"}
+                    });
+
+                case "ModStore.lua":
+                    return HackFile(file, new Dictionary<string, string>
+                    {
+                        {"local limitTotal", "local limitTotal = nil"}
+                    });
+
+                // TODO: Remove (or shim) PassiveTreeView.lua
+                case "PassiveTreeView.lua":
+                    return HackFile(file, new Dictionary<string, string>
+                    {
+                        {"local width = data.width * scale * 1.33", "local width = 1"},
+                        {"local height = data.height * scale * 1.33", "local height = 1"}
+                    });
+
+                // TODO: Remove (or shim) Control.lua and all related classes
+                case "Control.lua":
+                    return HackFile(file, new Dictionary<string, string>
+                    {
+                        {"if type(self[name]) == \"function\" then", "if self[name] and type(self[name]) == \"function\" then"}
+                    });
             }
 
             // Load from file system
             return new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        }
+
+        private static Stream HackFile(string file, IDictionary<string, string> values)
+        {
+            var text = File.ReadAllText(file);
+            foreach (var kvp in values)
+            {
+                text = text.Replace(kvp.Key, kvp.Value);
+            }
+
+            var bytes = Encoding.ASCII.GetBytes(text);
+            return new MemoryStream(bytes);
         }
 
         public override string ResolveFileName(string filename, Table globalContext)

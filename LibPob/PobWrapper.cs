@@ -7,7 +7,11 @@ namespace LibPob
 {
     public class PobWrapper
     {
+#if DEBUG
+        private readonly Script _script = new Script(CoreModules.Preset_Complete);
+#else
         private readonly Script _script = new Script();
+#endif
 
         public string InstallDirectory { get; }
 
