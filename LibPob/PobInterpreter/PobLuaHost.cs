@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using LibPob.PobInterpreter.FileLoader;
 using MoonSharp.Interpreter;
 
 namespace LibPob.PobInterpreter
 {
     internal class PobLuaHost
     {
+        private readonly ScriptLoader _scriptLoader;
+
         public Script Script { get; }
 
         public PobLuaHost(string pobDirectory)
@@ -18,27 +21,64 @@ namespace LibPob.PobInterpreter
             if (!Directory.Exists(pobDirectory))
                 throw new ArgumentException("Directory does not exist", nameof(pobDirectory));
 
-            Script = new Script(CoreModules.Preset_Complete);
+            _scriptLoader = new ScriptLoader(new[]
+            {
+                pobDirectory,
+                Path.Combine(Utils.AppDirectory, "PobInterpreter")
+            });
 
-            LoadScriptOptions(pobDirectory);
+            Script = new Script(CoreModules.Preset_Complete)
+            {
+                Options =
+                {
+                    DebugPrint = s => Console.WriteLine($"[Lua] {s}"),
+                    ScriptLoader = _scriptLoader
+                }
+            };
+
+            ApplyFileEdits();
             LoadPatchesAndLibraries();
             LoadPathOfBuilding(pobDirectory);
         }
 
-        private void LoadScriptOptions(string pobDirectory)
+
+        private void ApplyFileEdits()
         {
-            Script.Options.DebugPrint = s => Console.WriteLine($"[Lua] {s}");
-            Script.Options.ScriptLoader = new ScriptLoader(pobDirectory, Path.Combine(Utils.AppDirectory, "PobInterpreter"))
+            _scriptLoader.FileEdits.AddRange(new IFileEdit[]
             {
-                IgnoreLuaPathGlobal = true,
-                ModulePaths = new[]
-                {
-                    Path.Combine(pobDirectory, "?"),
-                    Path.Combine(pobDirectory, "?.lua"),
-                    Path.Combine(pobDirectory, "lua", "?"),
-                    Path.Combine(pobDirectory, "lua", "?.lua")
-                }
-            };
+                /*
+                 * TODO: Figure out the problem in MoonSharp
+                 *
+                 * for k, v in ipairs(a) do
+                 *      local b
+                 *      assert(a != b, "These should not be equal")
+                 * end
+                 */
+                new StringReplaceEdit("Item.lua", 
+                    "local varSpec\n", 
+                    "local varSpec = nil\n"),
+                new StringReplaceEdit("ModStore.lua", 
+                    "local limitTotal", 
+                    "local limitTotal = nil"),
+
+                // TODO: Shim PassiveTreeView.lua
+                new StringReplaceEdit("PassiveTreeView.lua", 
+                    "local width = data.width * scale * 1.33",
+                    "local width = 1"),
+                new StringReplaceEdit("PassiveTreeView.lua", 
+                    "local height = data.height * scale * 1.33",
+                    "local height = 1"),
+
+                // TODO: Shim Control.lua and related classes
+                new StringReplaceEdit("Control.lua",
+                    "if type(self[name]) == \"function\" then",
+                    "if self[name] and type(self[name]) == \"function\" then"),
+
+                // Patch out infoDump in Calcs.lua to clean up Console outut
+                new StringReplaceEdit("Calcs.lua", 
+                    "\t\tinfoDump(env)",
+                    "")
+            });
         }
 
         private void LoadPatchesAndLibraries()
