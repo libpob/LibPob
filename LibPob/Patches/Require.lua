@@ -13,10 +13,8 @@ function easyModule.setopt_writefunction(self, callback)
 end
 
 function easyModule.perform()
-	local obj = GetMainObject()
-
-	if obj and obj.DownloadPage then
-		GetMainObject().DownloadPage(local_url, local_callback, "")
+	if mainObject and mainObject.DownloadPage then
+		mainObject.DownloadPage(local_url, local_callback, "")
 	else
 		error("MainObject.DownloadPage is invalid")
 	end

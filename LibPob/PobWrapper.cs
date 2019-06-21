@@ -47,16 +47,24 @@ namespace LibPob
 
             _script.Globals["InstallDirectory"] = InstallDirectory;
 
-            _script.DoFile("Assets/PreLaunch.lua");
+            _script.DoFile("Assets/PobMockUi.lua");
             _script.DoFile("Launch.lua");
 
             _script.Globals.Get("launch").Table["CheckForUpdate"] = (Action<bool>) CheckForUpdateHook;
             _script.Globals.Get("launch").Table["DownloadPage"] = (Action<string, Closure, string>) DownloadPageHook;
 
-            _script.DoString("RunCallback(\"OnInit\")");
-            _script.DoString("RunCallback(\"OnFrame\")");
+            if (_script.Globals["RunCallback"] is Closure callback)
+            {
+                callback.Call("OnInit");
+                callback.Call("OnFrame");
+            }
 
-            _script.DoFile("Assets/PostLaunch.lua");
+            if (_script.Globals.Get("mainObject").Table["promptMsg"] is string error)
+            {
+                throw new Exception($"PoB Error: {error}");
+            }
+
+            _script.DoFile("Assets/HelperFunctions.lua");
         }
 
         private void LoadPatches()
