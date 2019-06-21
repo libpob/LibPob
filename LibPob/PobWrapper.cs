@@ -9,6 +9,7 @@ namespace LibPob
     {
         private readonly PobLuaHost _luaHost;
 
+        public Script Script => _luaHost.Script;
         public PobWrapper(string pobDirectory)
         {
             if (string.IsNullOrEmpty(pobDirectory))

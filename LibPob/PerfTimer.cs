@@ -22,7 +22,7 @@ namespace LibPob
         {
             _timer.Stop();
 
-            Console.WriteLine($"[PerfTimer] {_message} finished in {_timer.ElapsedMilliseconds}ms");
+            Console.WriteLine($"[PerfTimer] {_message} finished in {_timer.ElapsedMilliseconds:N0}ms");
         }
 
         public static PerfTimer Start(

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using LibPob;
+using MoonSharp.Interpreter.REPL;
 
 namespace Playground
 {
@@ -20,17 +21,39 @@ namespace Playground
 
             var wrapper = new PobWrapper(pobDirectory);
             wrapper.LoadBuildFromFile(Path.Combine(programPath, "Builds", "Test-Character.xml"));
+
+            Console.WriteLine("REPL Ready");
+            var repl = new ReplInterpreter(wrapper.Script);
+
+            var line = "";
+            while (line != "quit")
+            {
+                Console.Write(repl.ClassicPrompt);
+                line = Console.ReadLine();
+
+                try
+                {
+                    var result = repl.Evaluate(line);
+
+                    if(result.IsNotNil())
+                        Console.WriteLine(result);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exception: {e.Message}");
+                }
+
+            }
+
+            /*
             wrapper.RunLua(@"
-local player = GetPlayerActor()
-local mainSkill = player.mainSkill
-local output = player.output
+local build = mainObject.main.modes[""BUILD""]
 
-for _, skillEffect in ipairs(mainSkill.effectList) do
-    print(string.format(""Player Skill: %s %d/%d"", skillEffect.grantedEffect.name, skillEffect.level, skillEffect.quality))
-end
-
-print(""TotalDPS: "" .. output.TotalDPS)
+local f = io.open(""Player.txt"", ""w"")
+f:write(inspect(build.calcsTab.mainEnv.player))
+f:close()
 ");
+*/
 
             if (Debugger.IsAttached)
                 Console.ReadLine();
