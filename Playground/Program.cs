@@ -19,6 +19,18 @@ namespace Playground
             EnsurePobExists(pobDirectory).GetAwaiter().GetResult();
 
             var wrapper = new PobWrapper(pobDirectory);
+            wrapper.LoadBuildFromFile(Path.Combine(programPath, "Builds", "Test-Character.xml"));
+            wrapper.RunLua(@"
+local player = GetPlayerActor()
+local mainSkill = player.mainSkill
+local output = player.output
+
+for _, skillEffect in ipairs(mainSkill.effectList) do
+    print(string.format(""Player Skill: %s %d/%d"", skillEffect.grantedEffect.name, skillEffect.level, skillEffect.quality))
+end
+
+print(""TotalDPS: "" .. output.TotalDPS)
+");
 
             if (Debugger.IsAttached)
                 Console.ReadLine();

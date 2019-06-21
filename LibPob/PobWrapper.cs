@@ -40,6 +40,29 @@ namespace LibPob
             LoadLua();
         }
 
+        public void LoadBuildFromFile(string file)
+        {
+            if(string.IsNullOrEmpty(file))
+                throw new ArgumentNullException(nameof(file));
+            if (!File.Exists(file))
+                throw new ArgumentException("File does not exist", nameof(file));
+
+            if (_script.Globals["LoadBuildFromXML"] is Closure func)
+            {
+                var text = File.ReadAllText(file);
+
+                func.Call(text);
+            }
+        }
+
+        public void RunLua(string lua)
+        {
+            if(string.IsNullOrEmpty(lua))
+                throw new ArgumentNullException(nameof(lua));
+
+            _script.DoString(lua);
+        }
+
         private void LoadLua()
         {
             LoadPatches();

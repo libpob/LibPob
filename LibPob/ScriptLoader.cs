@@ -51,6 +51,7 @@ namespace LibPob
             /*
              * God forgive me, for I have made terrible "fixes"
              */
+            // TODO: Clean up this entire mess, implement regex matching/replacing
             switch (Path.GetFileName(file))
             {
                 /*
@@ -86,6 +87,13 @@ namespace LibPob
                     return HackFile(file, new Dictionary<string, string>
                     {
                         {"if type(self[name]) == \"function\" then", "if self[name] and type(self[name]) == \"function\" then"}
+                    });
+
+                // Patch out infoDump in Calcs.lua
+                case "Calcs.lua":
+                    return HackFile(file, new Dictionary<string, string>
+                    {
+                        {"\t\tinfoDump(env)" , ""}
                     });
             }
 

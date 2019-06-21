@@ -9,4 +9,14 @@
     <ProjectReference Include="..\LibPob\LibPob.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Builds\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Builds\Test-Character.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
