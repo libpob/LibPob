@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 
@@ -46,6 +47,37 @@ namespace LibPob
             var resource = FileNameToResource(file);
             if (_resourceNames.Contains(resource))
                 return _resourceAssembly.GetManifestResourceStream(resource);
+
+            /*
+             * God forgive me, for I have a butchered this.
+             *
+             * Problem: self.ModLines == varSpec
+             * Fix: local varSpec = nil
+             *
+             * TODO: Figure out the problem in MoonSharp
+             *
+             * for _, modLine in ipairs(self.modLines) do
+             *       if not modLine.buff then
+             *           ...
+             *           if modLine.variantList then
+             *               print("self.modLines: " .. l_dump(self.modLines) .. "\n")
+             *               local varSpec
+             *               print("varSpec: " .. l_dump(varSpec) .. "\n")
+             *               for varId in pairs(modLine.variantList) do
+             *                   varSpec = (varSpec and varSpec.."," or "") .. varId
+             *               end
+             *               line = "{variant:"..varSpec.."}"..line
+             *           end
+             *           t_insert(rawLines, line)
+             *       end
+             *   end
+             */
+            if (file.Contains("Item.lua"))
+            {
+                var text = File.ReadAllText(file).Replace("local varSpec\n", "local varSpec = nil\n");
+                var bytes = Encoding.ASCII.GetBytes(text);
+                return new MemoryStream(bytes);
+            }
 
             // Load from file system
             return new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
