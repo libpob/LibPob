@@ -7,7 +7,7 @@ using System.Text;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 
-namespace LibPob
+namespace LibPob.PobInterpreter
 {
     class ScriptLoader : ScriptLoaderBase
     {
@@ -47,6 +47,8 @@ namespace LibPob
             var resource = FileNameToResource(file);
             if (_resourceNames.Contains(resource))
                 return _resourceAssembly.GetManifestResourceStream(resource);
+
+            // Check if file exists
 
             /*
              * God forgive me, for I have made terrible "fixes"

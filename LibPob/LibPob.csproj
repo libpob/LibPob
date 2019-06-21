@@ -3,12 +3,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Assets\HelperFunctions.lua" />
-    <None Remove="Assets\PobMockUi.lua" />
+    <None Remove="PobInterpreter\Assets\HelperFunctions.lua" />
+    <None Remove="PobInterpreter\Assets\PobMockUi.lua" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\HelperFunctions.lua" />
-    <EmbeddedResource Include="Assets\PobMockUi.lua">
+    <EmbeddedResource Include="PobInterpreter\Assets\HelperFunctions.lua" />
+    <EmbeddedResource Include="PobInterpreter\Assets\PobMockUi.lua">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
@@ -16,19 +16,19 @@
     <ProjectReference Include="..\MoonSharp\src\MoonSharp.Interpreter\_Projects\MoonSharp.Interpreter.netcore\MoonSharp.Interpreter.netcore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Libs\bit.lua">
+    <None Update="PobInterpreter\Libs\bit.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\inspect.lua">
+    <None Update="PobInterpreter\Libs\inspect.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Patches\IO_Open.lua">
+    <None Update="PobInterpreter\Patches\IO_Open.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Patches\LoadString.lua">
+    <None Update="PobInterpreter\Patches\LoadString.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Patches\Require.lua">
+    <None Update="PobInterpreter\Patches\Require.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
